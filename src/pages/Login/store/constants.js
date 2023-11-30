@@ -1,0 +1,1 @@
+export const AUTHEN_SPACE = 'authentication';
