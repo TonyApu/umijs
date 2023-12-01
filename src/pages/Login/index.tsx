@@ -1,7 +1,9 @@
 import { Button, Form, Input } from 'antd';
 import { connect } from 'dva';
-import styles from './style.login.scss'
-import { AUTHEN_SPACE } from './store/constants';
+import { createStructuredSelector } from 'reselect';
+import { loginAction } from './store/actions';
+import { selectorAuthen } from './store/selector';
+import styles from './style.login.scss';
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
@@ -13,14 +15,11 @@ type FieldType = {
   remember?: string;
 };
 
-const LoginPage = ({ dispatch }) => {
+const LoginPage = (props) => {
   const onFinish = (values: any) => {
-    dispatch({
-      type: `${AUTHEN_SPACE}/login`,
-      payload: values,
-    });
+    props.login(values);
   };
-  
+
   return (
     <div className={styles.container}>
       <h2>Login Page</h2>
@@ -29,7 +28,7 @@ const LoginPage = ({ dispatch }) => {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        layout='vertical'
+        layout="vertical"
       >
         <Form.Item<FieldType>
           label="Username"
@@ -56,4 +55,12 @@ const LoginPage = ({ dispatch }) => {
   );
 };
 
-export default connect(({}) => ({}))(LoginPage);
+const mapStateToProps = createStructuredSelector({ login: selectorAuthen });
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    login: (values) => dispatch(loginAction(values)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

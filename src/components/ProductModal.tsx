@@ -1,5 +1,4 @@
 import { dateFormat } from '@/constants';
-import { PRODUCT_SPACE } from '@/pages/Products/store/constants';
 import { useUpdateEffect } from 'ahooks';
 import {
   Button,
@@ -59,9 +58,16 @@ const ProductModal: React.FC<{
   handleOk: () => void;
   handleCancel: () => void;
   dispatch: any;
-  reloadState: ()=> void;
-}> = ({ products, handleOk, handleCancel, isModalOpen, dispatch, reloadState }) => {
-    
+  reloadState: () => void;
+  deleteItem: (id) => void;
+}> = ({
+  products,
+  handleOk,
+  isModalOpen,
+  handleCancel,
+  reloadState,
+  deleteItem
+}) => {
   const [form] = Form.useForm();
   const { TextArea } = Input;
   const [withSauce, setWithSauce] = useState(false);
@@ -75,14 +81,10 @@ const ProductModal: React.FC<{
   }, [products]);
 
   const handleDeleteMenu = () => {
-    dispatch({
-      type: `${PRODUCT_SPACE}/deleteItem`,
-      payload: products.id,
-    });
-    reloadState()
+    deleteItem(products.id);
+    reloadState();
     handleOk();
-  }
-
+  };
 
   return (
     <Modal
@@ -203,4 +205,3 @@ const ProductModal: React.FC<{
 };
 
 export default ProductModal;
-

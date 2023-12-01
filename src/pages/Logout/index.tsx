@@ -1,13 +1,13 @@
 import { Button } from 'antd';
 import { connect } from 'umi';
 import styles from './style.logout.scss';
-import { AUTHEN_SPACE } from '../Login/store/constants';
+import { selectorAuthen } from '../Login/store/selector';
+import { logoutAction } from './store/actions'
+import { createStructuredSelector } from 'reselect';
 
 const LogoutPage = (props) => {
   const logout = () => {
-    props.dispatch({
-      type: `${AUTHEN_SPACE}/logout`,
-    });
+    props.logout()
   };
 
   return (
@@ -17,4 +17,12 @@ const LogoutPage = (props) => {
   );
 };
 
-export default connect()(LogoutPage);
+const mapStateToProps = createStructuredSelector({ login: selectorAuthen });
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logoutAction()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogoutPage);

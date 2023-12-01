@@ -5,6 +5,7 @@ export const dva = {
       console.error(err.message);
     },
     initialState: {
+      login: [],
       products: [],
       test: [],
     },

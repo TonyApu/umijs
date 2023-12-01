@@ -5,9 +5,12 @@ import ProductModal, { Product } from './ProductModal';
 
 const ProductList: React.FC<{
   products: Product;
+  handleOk: () => void;
+  handleCancel: () => void;
   dispatch: any;
-  reloadState: ()=> void;
-}> = ({ dispatch, products, reloadState }) => {
+  reloadState: () => void;
+  deleteItem: (id) => void;
+}> = ({products, dispatch, reloadState, deleteItem }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [product, setProduct] = useState<Product>({
     id: '',
@@ -69,6 +72,7 @@ const ProductList: React.FC<{
         handleOk={handleOk}
         handleCancel={handleCancel}
         reloadState={reloadState}
+        deleteItem={deleteItem}
       />
     </>
   );
