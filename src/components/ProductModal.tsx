@@ -57,7 +57,6 @@ const ProductModal: React.FC<{
   isModalOpen: boolean;
   handleOk: () => void;
   handleCancel: () => void;
-  dispatch: any;
   reloadState: () => void;
   deleteItem: (id) => void;
 }> = ({

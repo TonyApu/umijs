@@ -1,9 +1,9 @@
 import { Button } from 'antd';
 import { connect } from 'umi';
-import styles from './style.logout.scss';
 import { selectorAuthen } from '../Login/store/selector';
 import { logoutAction } from './store/actions'
 import { createStructuredSelector } from 'reselect';
+import styles from './logout.less';
 
 const LogoutPage = (props) => {
   const logout = () => {
@@ -11,7 +11,8 @@ const LogoutPage = (props) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div>
+      <h1 className={styles.title}>Page Logout</h1>
       <Button onClick={logout}>Logout</Button>
     </div>
   );

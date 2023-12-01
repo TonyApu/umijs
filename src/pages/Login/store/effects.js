@@ -1,6 +1,6 @@
-import { accountLogin } from '../../../services/authen';
 import { notification } from 'antd';
 import { history } from 'umi';
+import { accountLogin } from '../../../services/authen';
 
 export const authenEffects = {
   *login(payload, { call, put }) {
@@ -10,7 +10,8 @@ export const authenEffects = {
         type: 'changeLoginStatus',
         payload: res.role,
       });
-      history.push('/home');
+      history.push('/home')  
+      window.location.reload();
     } else {
       notification.error({
         message: 'Sai tài khoản hoặc mật khẩu',

@@ -2010,6 +2010,11 @@
     enhanced-resolve "5.9.3"
     is-equal "^1.6.4"
 
+"@umijs/plugin-access@^2.4.3":
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/@umijs/plugin-access/-/plugin-access-2.4.3.tgz#6bccbfe4969f43e58bc552a5ffbe247a2c33779a"
+  integrity sha512-6FON4aHzVFs/vtFK5Sdnw+FBolfoYi8wV8V9Q8x2T19NwjZtjXSPjt0gtrG4jdx4LRsSV2DKLaMGoJYbNr94aA==
+
 "@umijs/plugin-run@4.0.88":
   version "4.0.88"
   resolved "https://registry.yarnpkg.com/@umijs/plugin-run/-/plugin-run-4.0.88.tgz#2423f7abc2bf5debc9d6bb59058fbd2b6b3fcbdb"

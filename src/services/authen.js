@@ -3,12 +3,12 @@ export function accountLogin(params) {
     if (response.username === 'tony' && response.password === '1234') {
         return {
             status: 200,
-            role: 'admin'
+            role: 'ADMIN'
         }
     } else if (response.username === 'tamnxl' && response.password === '1234') {
         return {
             status: 200,
-            role: 'member'
+            role: 'USER'
         }
     } else {
         return {

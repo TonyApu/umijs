@@ -7,10 +7,9 @@ const ProductList: React.FC<{
   products: Product;
   handleOk: () => void;
   handleCancel: () => void;
-  dispatch: any;
   reloadState: () => void;
   deleteItem: (id) => void;
-}> = ({products, dispatch, reloadState, deleteItem }) => {
+}> = ({products, reloadState, deleteItem }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [product, setProduct] = useState<Product>({
     id: '',
@@ -66,7 +65,6 @@ const ProductList: React.FC<{
         })}
       />
       <ProductModal
-        dispatch={dispatch}
         products={product}
         isModalOpen={isModalOpen}
         handleOk={handleOk}

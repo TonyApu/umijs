@@ -16,33 +16,42 @@ export default defineConfig({
     {
       path: '/login',
       component: './Login',
+      access: 'noFilter'
     },
-    // {
-    //   path: '/',
-    //   component: '@/layouts/index',
-    //   wrappers: ['@/wrappers/auth'],
-    //   routes: [
-    //     { path: '/home', component: '@/pages/Home/index' },
-    //     { path: '/products', component: '@/pages/Products/index' },
-    //   ],
-    // },
     {
       name: 'Trang Chủ',
       path: '/home',
       component: './Home',
       wrappers: ['@/wrappers/auth'],
+      access: 'noFilter'
+    },
+    {
+      path: '/admin',
+      component: './Admin',
+      name: 'Admin',
+      wrappers: ['@/wrappers/auth'],
+      access: 'adminRouteFilter'
+    },
+    {
+      path: '/user',
+      component: './User',
+      name: 'User',
+      wrappers: ['@/wrappers/auth'],
+      access: 'userRouterFiler'
     },
     {
       path: '/products',
       component: './Products',
-      name: 'Thực đơn',
+      name: 'Menu',
       wrappers: ['@/wrappers/auth'],
+      access: 'adminRouteFilter'
     },
     {
       path: '/logout',
       component: './Logout',
-      name: 'Đăng xuất',
+      name: 'Log out',
       wrappers: ['@/wrappers/auth'],
+      access: 'noFilter'
     },
   ],
   mock: {
@@ -60,5 +69,8 @@ export default defineConfig({
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
+  },
+  access: {
+    strictMode: true,
   },
 });
