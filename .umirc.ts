@@ -2,10 +2,7 @@ import { defineConfig } from 'umi';
 
 export default defineConfig({
   model: {},
-  antd: {
-    dark: true,
-    compact: true,
-  },
+  antd: {},
   request: {},
   initialState: {},
   routes: [
@@ -51,6 +48,11 @@ export default defineConfig({
       component: './Logout',
       name: 'Log out',
       wrappers: ['@/wrappers/auth'],
+      access: 'noFilter'
+    },
+    {
+      path: '/*',
+      component: './NotFound',
       access: 'noFilter'
     },
   ],

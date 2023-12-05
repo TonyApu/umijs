@@ -63,6 +63,12 @@ export default defineMock({
   },
   'DELETE /api/products/:id': (req, res) => {
     products = products.filter((item) => item.id !== req.params.id);
-    res.send({ status: 'ok' });
+    res.send({ status: '200' });
   },
+  'POST /api/login/getNewToken': (_, res) => {
+    res.send({
+      status: 'ok',
+      data: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNjI3OTYyNDUyLCJleHAiOjE2Mjc5NjMwNTJ9.SbDZKlG1Z7eLcfsPjFviE65XKz-Y2fPqgNoWs3W2J8w',
+    });
+  }
 });

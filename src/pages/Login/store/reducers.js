@@ -1,7 +1,10 @@
 export const authenReducers = {
   changeLoginStatus(state, { payload }) {
-    console.log('payload: ', payload);
-    localStorage.setItem('roles', payload);
+    if (payload === 'GUEST') {
+      localStorage.clear();
+    } else {
+      localStorage.setItem('roles', payload);
+    } 
     return { ...state };
   },
 };
