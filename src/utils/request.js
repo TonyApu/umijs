@@ -51,7 +51,6 @@ request.interceptors.request.use((url, options) => {
   if (token) {
     let decodeToken = jwtDecode(token);
     const { iat, exp, refreshTime } = decodeToken;
-    console.log('check token: ', decodeToken);
     const maxTime = exp * 1000 + refreshTime;
     const nowTime = new Date().getTime();
     if (nowTime >= maxTime) {

@@ -39,7 +39,7 @@ export default defineConfig({
     {
       path: '/products',
       component: './Products',
-      name: 'Menu',
+      name: 'Products',
       wrappers: ['@/wrappers/auth'],
       access: 'adminRouteFilter'
     },
