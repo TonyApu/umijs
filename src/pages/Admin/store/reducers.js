@@ -29,4 +29,10 @@ export const menuReducers = {
       desert: payload,
     };
   },
+  saveReservation(state, { payload }) {
+    return {
+      ...state,
+      reservation: payload,
+    };
+  },
 };

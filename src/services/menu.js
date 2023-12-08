@@ -19,3 +19,9 @@ export async function getLunch(category) {
 export async function getDesert(category) {
   return request(`/api/menu/desert/${category}`);
 }
+
+export async function getReservation(id) {
+  return request(`/api/menu/reservation/${id}`, {
+    method: 'POST',
+  });
+}

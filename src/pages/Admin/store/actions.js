@@ -3,6 +3,7 @@ import {
   FETCH_CATEGORY_ACTION,
   FETCH_DESERT_ACTION,
   FETCH_LUNCH_ACTION,
+  FETCH_RESERVATION_ACTION,
   FETCH_RESTAURANT_ACTION,
   MENU_SPACE,
 } from './constants';
@@ -29,4 +30,9 @@ export const fetchLunchAction = (category) => ({
 export const fetchDesertAction = (category) => ({
   type: `${MENU_SPACE}/${FETCH_DESERT_ACTION}`,
   payload: category
+});
+
+export const fetchReservationAction = (id) => ({
+  type: `${MENU_SPACE}/${FETCH_RESERVATION_ACTION}`,
+  payload: id
 });

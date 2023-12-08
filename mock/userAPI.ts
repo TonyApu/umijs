@@ -59,7 +59,7 @@ let products: Product[] = [
   },
 ];
 
-const restaurants: SelectProps['options'] = [
+let restaurants: SelectProps['options'] = [
   {
     value: 'res1',
     label: 'Bar & Grill',
@@ -70,7 +70,7 @@ const restaurants: SelectProps['options'] = [
   },
 ];
 
-const category:any = {
+let category:any = {
   res1: [
     {
       value: 'egg',
@@ -89,7 +89,7 @@ const category:any = {
   ],
 };
 
-const breakfast:any = {
+let breakfast:any = {
   egg: [
     {
       value: 'eggBf1',
@@ -130,7 +130,7 @@ const breakfast:any = {
   ]
 };
 
-const lunch:any = {
+let lunch:any = {
   egg: [
     {
       value: 'eggL1',
@@ -167,7 +167,7 @@ const lunch:any = {
   ]
 };
 
-const desert:any = {
+let desert:any = {
   egg: [
     {
       value: 'eggD1',
@@ -199,6 +199,33 @@ const desert:any = {
     },
   ]
 };
+
+let reservation:any = {
+  11000000: {
+    place: 'Petrus',
+    quantity: 4,
+    date: new Date('2024-01-05'),
+    payment: 'paid online'
+  },
+  11000001: {
+    place: 'Savoy Grill',
+    quantity: 2,
+    date: new Date('2024-01-02'),
+    payment: 'cash'
+  },
+  11000002: {
+    place: 'Maze',
+    quantity: 4,
+    date: new Date('2023-12-09'),
+    payment: 'cash & coupon'
+  },
+  11000003: {
+    place: 'Pub & Grill',
+    quantity: 12,
+    date: new Date('2024-03-13'),
+    payment: 'paid online'
+  },
+}
 
 export default defineMock({
   'GET /api/products': (_, res) => {
@@ -245,6 +272,12 @@ export default defineMock({
     res.send({
       status: 200,
       data: desert[`${req.params.cat}`],
+    });
+  },
+  'POST /api/menu/reservation/:id': (req, res) => {
+    res.send({
+      status: 200,
+      data: reservation[`${req.params.id}`],
     });
   },
 });

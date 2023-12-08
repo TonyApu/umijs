@@ -3,6 +3,7 @@ import {
   getCategory,
   getDesert,
   getLunch,
+  getReservation,
   getRestaurant,
 } from '../../../services/menu';
 
@@ -39,6 +40,13 @@ export const menuEffects = {
     const { data } = yield call(getDesert, payload);
     yield put({
       type: 'saveDesert',
+      payload: data,
+    });
+  },
+  *fetchReservation({ payload }, { call, put }) {
+    const { data } = yield call(getReservation, payload);
+    yield put({
+      type: 'saveReservation',
       payload: data,
     });
   },

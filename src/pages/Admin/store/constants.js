@@ -9,3 +9,5 @@ export const FETCH_BREAKFAST_ACTION = 'fetchBreakfast';
 export const FETCH_LUNCH_ACTION = 'fetchLunch';
 
 export const FETCH_DESERT_ACTION = 'fetchDesert';
+
+export const FETCH_RESERVATION_ACTION = 'fetchReservation';

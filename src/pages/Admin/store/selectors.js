@@ -11,6 +11,7 @@ const selectorCategory = createSelector(allState, (state) => state.category);
 const selectorBreakfast = createSelector(allState, (state) => state.breakfast);
 const selectorLunch = createSelector(allState, (state) => state.lunch);
 const selectorDesert = createSelector(allState, (state) => state.desert);
+const selectorReservation = createSelector(allState, (state) => state.reservation);
 
 export {
   selectorBreakfast,
@@ -18,4 +19,5 @@ export {
   selectorDesert,
   selectorLunch,
   selectorRestaurant,
+  selectorReservation
 };

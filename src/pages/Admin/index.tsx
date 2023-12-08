@@ -1,4 +1,7 @@
+import { dateFormat } from '@/constants';
 import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { connect } from '@umijs/max';
+import { useUpdateEffect } from 'ahooks';
 import {
   Button,
   Col,
@@ -7,22 +10,39 @@ import {
   Input,
   Row,
   Select,
+  Spin,
   Switch,
   Typography,
+  notification,
 } from 'antd';
-import styles from './style.admin.scss';
-import { connect } from '@umijs/max';
-import { createStructuredSelector } from 'reselect';
-import { fetchBreakfastAction, fetchCategoryAction, fetchDesertAction, fetchLunchAction, fetchRestaurantAction } from './store/actions'
-import { selectorBreakfast, selectorCategory, selectorDesert, selectorLunch, selectorRestaurant } from './store/selectors'
+import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { useUpdateEffect } from 'ahooks';
+import { createStructuredSelector } from 'reselect';
+import {
+  fetchBreakfastAction,
+  fetchCategoryAction,
+  fetchDesertAction,
+  fetchLunchAction,
+  fetchReservationAction,
+  fetchRestaurantAction,
+} from './store/actions';
+import {
+  selectorBreakfast,
+  selectorCategory,
+  selectorDesert,
+  selectorLunch,
+  selectorReservation,
+  selectorRestaurant,
+} from './store/selectors';
+import styles from './style.admin.scss';
 
-const Menu = (props) => {
+const Menu = (props: any) => {
   const { Title } = Typography;
   const [form] = Form.useForm();
   const { Option } = Select;
   const [active, setActive] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [code, setCode] = useState<string>('');
   const restaurant = Form.useWatch('restaurant', form);
   const category = Form.useWatch('category', form);
 
@@ -33,7 +53,7 @@ const Menu = (props) => {
   useUpdateEffect(() => {
     props.fetchCategory(restaurant);
     form.setFieldValue('category', undefined);
-  }, [restaurant])
+  }, [restaurant]);
 
   useUpdateEffect(() => {
     props.fetchBreakfast(category);
@@ -42,12 +62,53 @@ const Menu = (props) => {
     form.setFieldValue('lunch', undefined);
     props.fetchDesert(category);
     form.setFieldValue('desert', undefined);
-  }, [category])
+  }, [category]);
 
-  const handleSwitchChange = (values) => {
+  const handleReservationCodeChange = (id: string) => {
+    setLoading(true);
+    if (id) {
+      let code = id;
+      while (code.length < 8) {
+        code = code + '0';
+      }
+      form.setFieldValue('code', code);
+      props.fetchReservation(code);
+      const reservation = props.reservation;
+      if (reservation) {
+        form.setFieldsValue({
+          ...reservation,
+          date: moment(reservation.date, dateFormat),
+        });
+      } else {
+        form.setFieldValue('place', '');
+        form.setFieldValue('quantity', '');
+        form.setFieldValue('date', null);
+        form.setFieldValue('payment', '');
+        notification.error({
+          message: 'No reservation found with code',
+        });
+      }
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  };
+
+  useUpdateEffect(() => {
+    if (code.length >= 8) {
+      handleReservationCodeChange(code);
+    }
+    const timer = setTimeout(() => {
+      handleReservationCodeChange(code);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [code]);
+
+  const handleSwitchChange = (values: any) => {
     form.setFieldValue('restaurant', undefined);
     setActive(values);
-  }
+  };
 
   const onFinish = (values: any) => {
     console.log('Received values of form: ', values);
@@ -62,18 +123,18 @@ const Menu = (props) => {
       </div>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className={styles.buttonWrapper}>
-          <Button icon={<ReloadOutlined />}>Xoá Màn Hình (ALT + R)</Button>
+          <Button icon={<ReloadOutlined />}>Delete Screen (ALT + R)</Button>
           <Button
             type="primary"
             className={styles.saveButton}
             icon={<SaveOutlined />}
-            htmlType='submit'
+            htmlType="submit"
           >
-            Lưu (ALT + S)
+            Save (ALT + S)
           </Button>
         </div>
         <div className={styles.sectionTitle}>
-          <Title level={5}>Thông Tin 1</Title>
+          <Title level={5}>Menu</Title>
         </div>
         <div className={styles.rowWrapper}>
           <Row gutter={16}>
@@ -81,9 +142,15 @@ const Menu = (props) => {
               <Form.Item
                 name="restaurant"
                 label="Restaurant"
-                rules={[{ required: active, message: 'Restaurant is required!' }]}
+                rules={[
+                  { required: active, message: 'Restaurant is required!' },
+                ]}
               >
-                <Select placeholder="-select-" options={props.restaurant} disabled={!active}/>
+                <Select
+                  placeholder="-select-"
+                  options={props.restaurant}
+                  disabled={!active}
+                />
               </Form.Item>
             </Col>
             <Col span={5}>
@@ -93,7 +160,7 @@ const Menu = (props) => {
                 rules={[{ required: active, message: 'Date 1 là bắt buộc!' }]}
               >
                 <DatePicker
-                  placeholder="Chọn thời điểm"
+                  placeholder="-select date-"
                   className={styles.datePicker}
                   disabled={!active}
                 />
@@ -112,16 +179,26 @@ const Menu = (props) => {
                 label="Category"
                 rules={[{ required: active, message: 'Category is required!' }]}
               >
-                <Select placeholder="-select-" options={props.category} disabled={!restaurant}/>
+                <Select
+                  placeholder="-select-"
+                  options={props.category}
+                  disabled={!restaurant}
+                />
               </Form.Item>
             </Col>
             <Col span={5}>
               <Form.Item
                 name="breakfast"
                 label="Breakfast"
-                rules={[{ required: active, message: 'Breakfast is required!' }]}
+                rules={[
+                  { required: active, message: 'Breakfast is required!' },
+                ]}
               >
-                <Select placeholder="-select-" options={props.breakfast} disabled={!category}/>
+                <Select
+                  placeholder="-select-"
+                  options={props.breakfast}
+                  disabled={!category}
+                />
               </Form.Item>
             </Col>
             <Col span={5}>
@@ -130,7 +207,11 @@ const Menu = (props) => {
                 label="Lunch"
                 rules={[{ required: active, message: 'Lunch is required!' }]}
               >
-                <Select placeholder="-select-" options={props.lunch} disabled={!category}/>
+                <Select
+                  placeholder="-select-"
+                  options={props.lunch}
+                  disabled={!category}
+                />
               </Form.Item>
             </Col>
             <Col span={5}>
@@ -139,73 +220,79 @@ const Menu = (props) => {
                 label="Desert"
                 rules={[{ required: active, message: 'Desert is required!' }]}
               >
-                <Select placeholder="-select-" options={props.desert} disabled={!category}/>
+                <Select
+                  placeholder="-select-"
+                  options={props.desert}
+                  disabled={!category}
+                />
               </Form.Item>
             </Col>
             <Col span={4}>
               <Form.Item name="active" label="Active">
-                <Switch checkedChildren="O" unCheckedChildren="X" onChange={handleSwitchChange} defaultChecked/>
-              </Form.Item>
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.sectionTitle}>
-          <Title level={5}>Thông Tin 2</Title>
-        </div>
-        <div className={styles.rowWrapper}>
-          <Row gutter={16}>
-            <Col span={5}>
-              <Form.Item
-                name="input1"
-                label="Input 1"
-                rules={[{ required: true, message: 'Input 1 là bắt buộc!' }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Row gutter={8}>
-                <Col span={12}>
-                  <Form.Item name="input2" label="Input 2">
-                    <Input disabled />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item name="input3" label="Input 3">
-                    <Input disabled />
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Date 3" name="date3">
-                <DatePicker
-                  placeholder=""
-                  className={styles.datePicker}
-                  disabled
+                <Switch
+                  checkedChildren="O"
+                  unCheckedChildren="X"
+                  onChange={handleSwitchChange}
+                  defaultChecked
                 />
               </Form.Item>
             </Col>
-            <Col span={5}>
-              <Form.Item
-                name="option6"
-                label="Option 6"
-                rules={[{ required: true, message: 'Option 6 là bắt buộc!' }]}
-              >
-                <Select placeholder="-select-">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item name="input4" label="Input 4">
-                <Input disabled />
-              </Form.Item>
-            </Col>
           </Row>
         </div>
-        <div className={styles.rowWrapper}>
+
+        <div className={styles.sectionTitle}>
+          <Title level={5}>Reservation</Title>
+        </div>
+        {loading ? (
+          <div className={styles.rowLoading}>
+            <Spin />
+          </div>
+        ) : (
+          <div className={styles.rowWrapper}>
+            <Row gutter={16}>
+              <Col span={5}>
+                <Form.Item
+                  name="code"
+                  label="Reservation Code"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Reservation code is required!',
+                    },
+                  ]}
+                >
+                  <Input onChange={(e) => setCode(e.target.value)} />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item name="place" label="Place">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item label="Date" name="date">
+                  <DatePicker
+                    placeholder=""
+                    format={dateFormat}
+                    className={styles.datePicker}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={5}>
+                <Form.Item name="quantity" label="Quantity">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item name="payment" label="Payment">
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+          </div>
+        )}
+        {/* <div className={styles.rowWrapper}>
           <Row gutter={16}>
             <Col span={5}>
               <Form.Item
@@ -227,7 +314,7 @@ const Menu = (props) => {
             <Col span={5}>
               <Form.Item label="Date 4" name="date4">
                 <DatePicker
-                  placeholder="Chọn thời điểm"
+                  placeholder="-select date-"
                   className={styles.datePicker}
                 />
               </Form.Item>
@@ -265,7 +352,7 @@ const Menu = (props) => {
             <Col span={5}>
               <Form.Item label="Date 5" name="date5">
                 <DatePicker
-                  placeholder="Chọn thời điểm"
+                  placeholder="-select date-"
                   className={styles.datePicker}
                 />
               </Form.Item>
@@ -304,7 +391,7 @@ const Menu = (props) => {
             <Col span={5}>
               <Form.Item label="Date 6" name="date6">
                 <DatePicker
-                  placeholder="Chọn thời điểm"
+                  placeholder="-select date-"
                   className={styles.datePicker}
                 />
               </Form.Item>
@@ -341,7 +428,7 @@ const Menu = (props) => {
               </Form.Item>
             </Col>
             <Col span={5}>
-              <Form.Item label='' name="input11">
+              <Form.Item label="" name="input11">
                 <Input disabled />
               </Form.Item>
             </Col>
@@ -355,11 +442,11 @@ const Menu = (props) => {
               </Form.Item>
             </Col>
           </Row>
-        </div>
+        </div> */}
       </Form>
     </div>
   );
-}
+};
 
 const mapStateToProps = createStructuredSelector({
   restaurant: selectorRestaurant,
@@ -367,16 +454,19 @@ const mapStateToProps = createStructuredSelector({
   breakfast: selectorBreakfast,
   lunch: selectorLunch,
   desert: selectorDesert,
+  reservation: selectorReservation,
 });
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: any) => {
   return {
-    fetchCategory: (id) => dispatch(fetchCategoryAction(id)),
+    fetchCategory: (id: string) => dispatch(fetchCategoryAction(id)),
     fetchRestaurant: () => dispatch(fetchRestaurantAction()),
-    fetchBreakfast: (category) => dispatch(fetchBreakfastAction(category)),
-    fetchLunch: (category) => dispatch(fetchLunchAction(category)),
-    fetchDesert: (category) => dispatch(fetchDesertAction(category)),
-  }
-}
+    fetchBreakfast: (category: string) =>
+      dispatch(fetchBreakfastAction(category)),
+    fetchLunch: (category: string) => dispatch(fetchLunchAction(category)),
+    fetchDesert: (category: string) => dispatch(fetchDesertAction(category)),
+    fetchReservation: (id: string) => dispatch(fetchReservationAction(id)),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Menu);

@@ -32,6 +32,12 @@ $primary-color: #3486eb;
     .datePicker {
       width: 100%;
     }
+  }
 
+  .rowLoading {
+    margin: 20px 0;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 4px;
   }
 }
