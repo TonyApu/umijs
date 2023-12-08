@@ -19,6 +19,8 @@
     "antd": "^5.4.0",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
+    "react-hotkeys": "^2.0.0",
+    "react-hotkeys-hook": "^4.4.1",
     "reselect": "^4.1.8",
     "start": "^5.1.0",
     "umi-plugin-dva": "^1.11.4",

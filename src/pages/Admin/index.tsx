@@ -17,7 +17,10 @@ import {
 } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { createStructuredSelector } from 'reselect';
+
+import { getReservation } from '@/services/menu';
 import {
   fetchBreakfastAction,
   fetchCategoryAction,
@@ -39,7 +42,7 @@ import styles from './style.admin.scss';
 const Menu = (props: any) => {
   const { Title } = Typography;
   const [form] = Form.useForm();
-  const { Option } = Select;
+  // const { Option } = Select;
   const [active, setActive] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
@@ -72,37 +75,38 @@ const Menu = (props: any) => {
         code = code + '0';
       }
       form.setFieldValue('code', code);
-      props.fetchReservation(code);
-      const reservation = props.reservation;
-      if (reservation) {
-        form.setFieldsValue({
-          ...reservation,
-          date: moment(reservation.date, dateFormat),
-        });
-      } else {
-        form.setFieldValue('place', '');
-        form.setFieldValue('quantity', '');
-        form.setFieldValue('date', null);
-        form.setFieldValue('payment', '');
-        notification.error({
-          message: 'No reservation found with code',
-        });
-      }
+      getReservation(code).then((res) => {
+        if (res.data) {
+          form.setFieldsValue({
+            ...res.data,
+            date: moment(res.data.date, dateFormat),
+          });
+        } else {
+          form.setFieldValue('place', '');
+          form.setFieldValue('quantity', '');
+          form.setFieldValue('date', null);
+          form.setFieldValue('payment', '');
+          notification.error({
+            message: 'No reservation found with code',
+          });
+        }
+      });
     }
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1500);
   };
 
   useUpdateEffect(() => {
     if (code.length >= 8) {
       handleReservationCodeChange(code);
-    }
-    const timer = setTimeout(() => {
-      handleReservationCodeChange(code);
-    }, 2000);
+    } else {
+      const timer = setTimeout(() => {
+        handleReservationCodeChange(code);
+      }, 2000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [code]);
 
   const handleSwitchChange = (values: any) => {
@@ -111,8 +115,20 @@ const Menu = (props: any) => {
   };
 
   const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
+    notification.success({
+      message: 'Submit successfully!'
+    })
   };
+
+  useHotkeys('ctrl+r', () => form.resetFields());
+
+  useHotkeys('ctrl+s', () => {
+    form.validateFields();
+    const errors = form.getFieldsError();
+    if ((errors.length = 0)) {
+      onFinish(form.getFieldsValue());
+    }
+  });
 
   return (
     <div className={styles.container}>
@@ -123,14 +139,14 @@ const Menu = (props: any) => {
       </div>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className={styles.buttonWrapper}>
-          <Button icon={<ReloadOutlined />}>Delete Screen (ALT + R)</Button>
+          <Button icon={<ReloadOutlined />}>Delete Screen (CTRL + R)</Button>
           <Button
             type="primary"
             className={styles.saveButton}
             icon={<SaveOutlined />}
             htmlType="submit"
           >
-            Save (ALT + S)
+            Save (CTRL + S)
           </Button>
         </div>
         <div className={styles.sectionTitle}>
