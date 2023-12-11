@@ -19,20 +19,21 @@ export const fetchCategoryAction = (id) => ({
 
 export const fetchBreakfastAction = (category) => ({
   type: `${MENU_SPACE}/${FETCH_BREAKFAST_ACTION}`,
-  payload: category
+  payload: category,
 });
 
 export const fetchLunchAction = (category) => ({
   type: `${MENU_SPACE}/${FETCH_LUNCH_ACTION}`,
-  payload: category
+  payload: category,
 });
 
 export const fetchDesertAction = (category) => ({
   type: `${MENU_SPACE}/${FETCH_DESERT_ACTION}`,
-  payload: category
+  payload: category,
 });
 
-export const fetchReservationAction = (id) => ({
+export const fetchReservationAction = (id, resolve) => ({
   type: `${MENU_SPACE}/${FETCH_RESERVATION_ACTION}`,
-  payload: id
+  payload: id,
+  resolve,
 });

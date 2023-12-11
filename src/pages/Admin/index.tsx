@@ -1,5 +1,10 @@
 import { dateFormat } from '@/constants';
-import { CheckOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  LoadingOutlined,
+  ReloadOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import { connect } from '@umijs/max';
 import { useDebounce, useUpdateEffect } from 'ahooks';
 import {
@@ -20,7 +25,7 @@ import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { createStructuredSelector } from 'reselect';
 
-import { getReservation, submitForm } from '@/services/menu';
+import { submitForm } from '@/services/menu';
 import {
   fetchBreakfastAction,
   fetchCategoryAction,
@@ -46,7 +51,7 @@ const Menu = (props: any) => {
   const [active, setActive] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
-  const debouncedValue = useDebounce(code, { wait: 2000 });
+  const debouncedValue = useDebounce(code, { wait: 500 });
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const restaurant = Form.useWatch('restaurant', form);
   const category = Form.useWatch('category', form);
@@ -70,19 +75,36 @@ const Menu = (props: any) => {
   }, [category]);
 
   const handleReservationCodeChange = (id: string) => {
-    setLoading(true);
     if (id) {
       let code = id;
       while (code.length < 8) {
         code = '0' + code;
       }
       form.setFieldValue('code', code);
-      getReservation(code).then((res) => {
-        if (res.data) {
+      // getReservation(code).then((res) => {
+      //   if (res.data) {
+      //     setIsChecked(true);
+      //     form.setFieldsValue({
+      //       ...res.data,
+      //       date: moment(res.data.date, dateFormat),
+      //     });
+      //   } else {
+      //     form.setFieldValue('place', '');
+      //     form.setFieldValue('quantity', '');
+      //     form.setFieldValue('date', null);
+      //     form.setFieldValue('payment', '');
+      //     notification.error({
+      //       message: 'No reservation found with code',
+      //     });
+      //   }
+      // });
+      props.fetchReservation(code, (data) => {
+        console.log('res: ', data);
+        if (data) {
           setIsChecked(true);
           form.setFieldsValue({
-            ...res.data,
-            date: moment(res.data.date, dateFormat),
+            ...data,
+            date: moment(data.date, dateFormat),
           });
         } else {
           form.setFieldValue('place', '');
@@ -101,6 +123,7 @@ const Menu = (props: any) => {
   };
 
   useUpdateEffect(() => {
+    setLoading(true);
     setIsChecked(false);
     handleReservationCodeChange(debouncedValue);
   }, [debouncedValue]);
@@ -137,10 +160,7 @@ const Menu = (props: any) => {
       </div>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className={styles.buttonWrapper}>
-          <Button
-            icon={<ReloadOutlined/>}
-            onClick={handleDelete}
-          >
+          <Button icon={<ReloadOutlined />} onClick={handleDelete}>
             Delete Screen (CTRL + R)
           </Button>
           <Button
@@ -266,27 +286,36 @@ const Menu = (props: any) => {
         <div className={styles.rowWrapper}>
           <Row gutter={16}>
             <Col span={5}>
-              {loading ? (
-                <div className={styles.rowLoading}>
-                  <Spin />
-                </div>
-              ) : (
-                <Form.Item
-                  name="code"
-                  label="Reservation Code"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Reservation code is required!',
-                    },
-                  ]}
-                >
-                  <Input
-                    onChange={(e) => setCode(e.target.value)}
-                    suffix={isChecked && <CheckOutlined style={{ color: 'green', fontSize: 16 }} />}
-                  />
-                </Form.Item>
-              )}
+              <Form.Item
+                name="code"
+                label="Reservation Code"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Reservation code is required!',
+                  },
+                ]}
+              >
+                <Input
+                  onChange={(e) => setCode(e.target.value)}
+                  suffix={
+                    loading ? (
+                      <Spin
+                        indicator={
+                          <LoadingOutlined style={{ fontSize: 16 }} spin />
+                        }
+                      />
+                    ) : (
+                      isChecked && (
+                        <CheckOutlined
+                          style={{ color: 'green', fontSize: 16 }}
+                        />
+                      )
+                    )
+                  }
+                  disabled={loading}
+                />
+              </Form.Item>
             </Col>
             <Col span={5}>
               <Form.Item name="place" label="Place">
@@ -315,157 +344,6 @@ const Menu = (props: any) => {
             </Col>
           </Row>
         </div>
-        {/* <div className={styles.rowWrapper}>
-          <Row gutter={16}>
-            <Col span={5}>
-              <Form.Item
-                name="option7"
-                label="Option 7"
-                rules={[{ required: true, message: 'Option 7 là bắt buộc!' }]}
-              >
-                <Select placeholder="-select-">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Input 5" name="input5">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Date 4" name="date4">
-                <DatePicker
-                  placeholder="-select date-"
-                  className={styles.datePicker}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Input 6" name="input6">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item
-                name="option8"
-                label="Option 8"
-                rules={[{ required: true, message: 'Option 8 là bắt buộc!' }]}
-              >
-                <Select placeholder="-select-">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.rowWrapper}>
-          <Row gutter={16}>
-            <Col span={5}>
-              <Form.Item
-                label="Input 7"
-                name="input7"
-                rules={[{ required: true, message: 'Input 7 là bắt buộc!' }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Date 5" name="date5">
-                <DatePicker
-                  placeholder="-select date-"
-                  className={styles.datePicker}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item name="switch2" label="Switch 2">
-                <Switch checkedChildren="O" unCheckedChildren="X" />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item
-                name="option9"
-                label="Option 9"
-                rules={[{ required: true, message: 'Option 9 là bắt buộc!' }]}
-              >
-                <Select placeholder="-select-">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={4}></Col>
-          </Row>
-        </div>
-        <div className={styles.rowWrapper}>
-          <Row gutter={16}>
-            <Col span={5}>
-              <Form.Item
-                label="Input 8"
-                name="input8"
-                rules={[{ required: true, message: 'Input 8 là bắt buộc!' }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Date 6" name="date6">
-                <DatePicker
-                  placeholder="-select date-"
-                  className={styles.datePicker}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={10}>
-              <Form.Item
-                name="option10"
-                label="Option 10"
-                rules={[{ required: true, message: 'Option 10 là bắt buộc!' }]}
-              >
-                <Select placeholder="-select-">
-                  <Option value="china">China</Option>
-                  <Option value="usa">U.S.A</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item label="Input 9" name="input9">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.rowWrapper}>
-          <Row gutter={16}>
-            <Col span={5}>
-              <Form.Item label="Input 10" name="input10">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="Input 11" name="input11">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item label="" name="input11">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-            <Col span={5}>
-              <Form.Item
-                label="Input 12"
-                name="input12"
-                rules={[{ required: true, message: 'Input 12 là bắt buộc!' }]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
-        </div> */}
       </Form>
     </div>
   );
@@ -488,7 +366,10 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(fetchBreakfastAction(category)),
     fetchLunch: (category: string) => dispatch(fetchLunchAction(category)),
     fetchDesert: (category: string) => dispatch(fetchDesertAction(category)),
-    fetchReservation: (id: string) => dispatch(fetchReservationAction(id)),
+    fetchReservation: (id: string) =>
+      new Promise((resolve: any) =>
+        dispatch(fetchReservationAction(id, resolve)),
+      ),
   };
 };
 

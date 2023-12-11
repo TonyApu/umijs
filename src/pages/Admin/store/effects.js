@@ -43,11 +43,12 @@ export const menuEffects = {
       payload: data,
     });
   },
-  *fetchReservation({ payload }, { call, put }) {
-    const { data } = yield call(getReservation, payload);
-    yield put({
-      type: 'saveReservation',
-      payload: data,
-    });
+  *fetchReservation({ payload, resolve }, { call, put }) {
+    const { data } = yield call(getReservation, payload, resolve);
+    resolve(data);
+    // yield put({
+    //   type: 'saveReservation',
+    //   payload: data,
+    // });
   },
 };
