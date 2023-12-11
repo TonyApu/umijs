@@ -46,7 +46,7 @@ const Menu = (props: any) => {
   const [active, setActive] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
-  const debouncedValue = useDebounce(code, { wait: 3000 });
+  const debouncedValue = useDebounce(code, { wait: 2000 });
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const restaurant = Form.useWatch('restaurant', form);
   const category = Form.useWatch('category', form);
@@ -102,7 +102,7 @@ const Menu = (props: any) => {
 
   useUpdateEffect(() => {
     setIsChecked(false);
-    handleReservationCodeChange(debouncedValue)
+    handleReservationCodeChange(debouncedValue);
   }, [debouncedValue]);
 
   const handleSwitchChange = (values: any) => {
@@ -115,7 +115,7 @@ const Menu = (props: any) => {
       notification.success({
         message: 'Submit successfully!',
       });
-    })
+    });
   };
 
   const handleDelete = () => {
@@ -125,7 +125,7 @@ const Menu = (props: any) => {
 
   useHotkeys('ctrl+r', () => handleDelete());
   useHotkeys('ctrl+s', () => {
-    form.submit()
+    form.submit();
   });
 
   return (
@@ -137,7 +137,10 @@ const Menu = (props: any) => {
       </div>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className={styles.buttonWrapper}>
-          <Button icon={<ReloadOutlined />} onClick={handleDelete}>
+          <Button
+            icon={<ReloadOutlined/>}
+            onClick={handleDelete}
+          >
             Delete Screen (CTRL + R)
           </Button>
           <Button
@@ -280,7 +283,7 @@ const Menu = (props: any) => {
                 >
                   <Input
                     onChange={(e) => setCode(e.target.value)}
-                    suffix={isChecked && <CheckOutlined />}
+                    suffix={isChecked && <CheckOutlined style={{ color: 'green', fontSize: 16 }} />}
                   />
                 </Form.Item>
               )}
