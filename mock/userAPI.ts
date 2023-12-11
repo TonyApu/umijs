@@ -70,7 +70,7 @@ let restaurants: SelectProps['options'] = [
   },
 ];
 
-let category:any = {
+let category: any = {
   res1: [
     {
       value: 'egg',
@@ -89,7 +89,7 @@ let category:any = {
   ],
 };
 
-let breakfast:any = {
+let breakfast: any = {
   egg: [
     {
       value: 'eggBf1',
@@ -127,10 +127,10 @@ let breakfast:any = {
       value: 'burgerBf2',
       label: 'Stout Burger',
     },
-  ]
+  ],
 };
 
-let lunch:any = {
+let lunch: any = {
   egg: [
     {
       value: 'eggL1',
@@ -164,10 +164,10 @@ let lunch:any = {
       value: 'burgerL2',
       label: 'Beef Wellingtons',
     },
-  ]
+  ],
 };
 
-let desert:any = {
+let desert: any = {
   egg: [
     {
       value: 'eggD1',
@@ -197,35 +197,35 @@ let desert:any = {
       value: 'burgerD2',
       label: 'Apple',
     },
-  ]
+  ],
 };
 
-let reservation:any = {
-  11000000: {
+let reservation: any = {
+  '00000010': {
     place: 'Petrus',
     quantity: 4,
     date: new Date('2024-01-05'),
-    payment: 'paid online'
+    payment: 'paid online',
   },
-  11000001: {
+  '00000011': {
     place: 'Savoy Grill',
     quantity: 2,
     date: new Date('2024-01-02'),
-    payment: 'cash'
+    payment: 'cash',
   },
-  11000002: {
+  '00000012': {
     place: 'Maze',
     quantity: 4,
     date: new Date('2023-12-09'),
-    payment: 'cash & coupon'
+    payment: 'cash & coupon',
   },
-  11000003: {
+  '00000013': {
     place: 'Pub & Grill',
     quantity: 12,
     date: new Date('2024-03-13'),
-    payment: 'paid online'
+    payment: 'paid online',
   },
-}
+};
 
 export default defineMock({
   'GET /api/products': (_, res) => {
@@ -278,6 +278,11 @@ export default defineMock({
     res.send({
       status: 200,
       data: reservation[`${req.params.id}`],
+    });
+  },
+  'POST /api/menu/reservation': (req, res) => {
+    res.send({
+      status: 200,
     });
   },
 });

@@ -1,7 +1,7 @@
 import { dateFormat } from '@/constants';
-import { ReloadOutlined, SaveOutlined } from '@ant-design/icons';
+import { CheckOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { connect } from '@umijs/max';
-import { useUpdateEffect } from 'ahooks';
+import { useDebounce, useUpdateEffect } from 'ahooks';
 import {
   Button,
   Col,
@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { createStructuredSelector } from 'reselect';
 
-import { getReservation } from '@/services/menu';
+import { getReservation, submitForm } from '@/services/menu';
 import {
   fetchBreakfastAction,
   fetchCategoryAction,
@@ -46,6 +46,8 @@ const Menu = (props: any) => {
   const [active, setActive] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [code, setCode] = useState<string>('');
+  const debouncedValue = useDebounce(code, { wait: 3000 });
+  const [isChecked, setIsChecked] = useState<boolean>(false);
   const restaurant = Form.useWatch('restaurant', form);
   const category = Form.useWatch('category', form);
 
@@ -72,11 +74,12 @@ const Menu = (props: any) => {
     if (id) {
       let code = id;
       while (code.length < 8) {
-        code = code + '0';
+        code = '0' + code;
       }
       form.setFieldValue('code', code);
       getReservation(code).then((res) => {
         if (res.data) {
+          setIsChecked(true);
           form.setFieldsValue({
             ...res.data,
             date: moment(res.data.date, dateFormat),
@@ -94,20 +97,13 @@ const Menu = (props: any) => {
     }
     setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   useUpdateEffect(() => {
-    if (code.length >= 8) {
-      handleReservationCodeChange(code);
-    } else {
-      const timer = setTimeout(() => {
-        handleReservationCodeChange(code);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [code]);
+    setIsChecked(false);
+    handleReservationCodeChange(debouncedValue)
+  }, [debouncedValue]);
 
   const handleSwitchChange = (values: any) => {
     form.setFieldValue('restaurant', undefined);
@@ -115,19 +111,21 @@ const Menu = (props: any) => {
   };
 
   const onFinish = (values: any) => {
-    notification.success({
-      message: 'Submit successfully!'
+    submitForm(values).then(() => {
+      notification.success({
+        message: 'Submit successfully!',
+      });
     })
   };
 
-  useHotkeys('ctrl+r', () => form.resetFields());
+  const handleDelete = () => {
+    setIsChecked(false);
+    form.resetFields();
+  };
 
+  useHotkeys('ctrl+r', () => handleDelete());
   useHotkeys('ctrl+s', () => {
-    form.validateFields();
-    const errors = form.getFieldsError();
-    if ((errors.length = 0)) {
-      onFinish(form.getFieldsValue());
-    }
+    form.submit()
   });
 
   return (
@@ -139,7 +137,9 @@ const Menu = (props: any) => {
       </div>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className={styles.buttonWrapper}>
-          <Button icon={<ReloadOutlined />}>Delete Screen (CTRL + R)</Button>
+          <Button icon={<ReloadOutlined />} onClick={handleDelete}>
+            Delete Screen (CTRL + R)
+          </Button>
           <Button
             type="primary"
             className={styles.saveButton}
@@ -259,14 +259,15 @@ const Menu = (props: any) => {
         <div className={styles.sectionTitle}>
           <Title level={5}>Reservation</Title>
         </div>
-        {loading ? (
-          <div className={styles.rowLoading}>
-            <Spin />
-          </div>
-        ) : (
-          <div className={styles.rowWrapper}>
-            <Row gutter={16}>
-              <Col span={5}>
+
+        <div className={styles.rowWrapper}>
+          <Row gutter={16}>
+            <Col span={5}>
+              {loading ? (
+                <div className={styles.rowLoading}>
+                  <Spin />
+                </div>
+              ) : (
                 <Form.Item
                   name="code"
                   label="Reservation Code"
@@ -277,37 +278,40 @@ const Menu = (props: any) => {
                     },
                   ]}
                 >
-                  <Input onChange={(e) => setCode(e.target.value)} />
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item name="place" label="Place">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item label="Date" name="date">
-                  <DatePicker
-                    placeholder=""
-                    format={dateFormat}
-                    className={styles.datePicker}
-                    disabled
+                  <Input
+                    onChange={(e) => setCode(e.target.value)}
+                    suffix={isChecked && <CheckOutlined />}
                   />
                 </Form.Item>
-              </Col>
-              <Col span={5}>
-                <Form.Item name="quantity" label="Quantity">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-              <Col span={4}>
-                <Form.Item name="payment" label="Payment">
-                  <Input disabled />
-                </Form.Item>
-              </Col>
-            </Row>
-          </div>
-        )}
+              )}
+            </Col>
+            <Col span={5}>
+              <Form.Item name="place" label="Place">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item label="Date" name="date">
+                <DatePicker
+                  placeholder=""
+                  format={dateFormat}
+                  className={styles.datePicker}
+                  disabled
+                />
+              </Form.Item>
+            </Col>
+            <Col span={5}>
+              <Form.Item name="quantity" label="Quantity">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item name="payment" label="Payment">
+                <Input disabled />
+              </Form.Item>
+            </Col>
+          </Row>
+        </div>
         {/* <div className={styles.rowWrapper}>
           <Row gutter={16}>
             <Col span={5}>

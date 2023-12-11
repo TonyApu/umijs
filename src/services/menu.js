@@ -25,3 +25,12 @@ export async function getReservation(id) {
     method: 'POST',
   });
 }
+
+export async function submitForm(formValues) {
+  return request('/api/menu/reservation', {
+    method: 'POST',
+    params: {
+      values: formValues
+    }
+  });
+}
