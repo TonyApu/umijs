@@ -17,7 +17,6 @@ export default defineConfig({
       access: 'noFilter'
     },
     {
-      name: 'Trang Chủ',
       path: '/home',
       component: './Home',
       wrappers: ['@/wrappers/auth'],
@@ -49,7 +48,7 @@ export default defineConfig({
       component: './Logout',
       name: 'Log out',
       wrappers: ['@/wrappers/auth'],
-      access: 'noFilter'
+      access: 'authenUserFilter'
     },
     {
       path: '/*',

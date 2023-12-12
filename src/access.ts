@@ -3,7 +3,8 @@ export default function () {
   const isUser = localStorage.getItem('roles') === 'USER';
   return {
     noFilter: true,
-    userRouterFiler: () => isUser,
+    authenUserFilter: () => isAdmin || isUser,
+    userRouterFiler: () => isUser, // Only user
     adminRouteFilter: () => isAdmin, // Only admin could access it
   };
 }

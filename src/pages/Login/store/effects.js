@@ -25,6 +25,7 @@ export const authenEffects = {
       type: 'changeLoginStatus',
       payload: 'GUEST'
     });
-    history.push('/home');
+    history.push('/');
+    window.location.reload();
   },
 };
