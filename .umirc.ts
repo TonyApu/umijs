@@ -9,6 +9,7 @@ export default defineConfig({
     {
       path: '/',
       redirect: '/home',
+      access: 'noFilter'
     },
     {
       path: '/login',

@@ -33,6 +33,7 @@ import {
   fetchLunchAction,
   fetchReservationAction,
   fetchRestaurantAction,
+  submitFormAction,
 } from './store/actions';
 import {
   selectorBreakfast,
@@ -81,25 +82,7 @@ const Menu = (props: any) => {
         code = '0' + code;
       }
       form.setFieldValue('code', code);
-      // getReservation(code).then((res) => {
-      //   if (res.data) {
-      //     setIsChecked(true);
-      //     form.setFieldsValue({
-      //       ...res.data,
-      //       date: moment(res.data.date, dateFormat),
-      //     });
-      //   } else {
-      //     form.setFieldValue('place', '');
-      //     form.setFieldValue('quantity', '');
-      //     form.setFieldValue('date', null);
-      //     form.setFieldValue('payment', '');
-      //     notification.error({
-      //       message: 'No reservation found with code',
-      //     });
-      //   }
-      // });
-      props.fetchReservation(code, (data) => {
-        console.log('res: ', data);
+      props.fetchReservation(code, (data: any) => {
         if (data) {
           setIsChecked(true);
           form.setFieldsValue({
@@ -355,7 +338,6 @@ const mapStateToProps = createStructuredSelector({
   breakfast: selectorBreakfast,
   lunch: selectorLunch,
   desert: selectorDesert,
-  reservation: selectorReservation,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -366,10 +348,9 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(fetchBreakfastAction(category)),
     fetchLunch: (category: string) => dispatch(fetchLunchAction(category)),
     fetchDesert: (category: string) => dispatch(fetchDesertAction(category)),
-    fetchReservation: (id: string) =>
-      new Promise((resolve: any) =>
-        dispatch(fetchReservationAction(id, resolve)),
-      ),
+    fetchReservation: (id: string, resolve: any) =>
+      dispatch(fetchReservationAction(id, resolve)),
+    submitForm: (values: any) => dispatch(submitFormAction(values)),
   };
 };
 

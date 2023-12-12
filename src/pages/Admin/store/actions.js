@@ -6,6 +6,7 @@ import {
   FETCH_RESERVATION_ACTION,
   FETCH_RESTAURANT_ACTION,
   MENU_SPACE,
+  SUBMIT_FORM_ACTION,
 } from './constants';
 
 export const fetchRestaurantAction = () => ({
@@ -36,4 +37,9 @@ export const fetchReservationAction = (id, resolve) => ({
   type: `${MENU_SPACE}/${FETCH_RESERVATION_ACTION}`,
   payload: id,
   resolve,
+});
+
+export const submitFormAction = (id) => ({
+  type: `${MENU_SPACE}/${SUBMIT_FORM_ACTION}`,
+  payload: id,
 });

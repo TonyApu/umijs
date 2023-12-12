@@ -5,7 +5,9 @@ import {
   getLunch,
   getReservation,
   getRestaurant,
+  submitForm,
 } from '../../../services/menu';
+import { notification } from 'antd';
 
 export const menuEffects = {
   *fetchRestaurant(_, { call, put }) {
@@ -46,9 +48,13 @@ export const menuEffects = {
   *fetchReservation({ payload, resolve }, { call, put }) {
     const { data } = yield call(getReservation, payload, resolve);
     resolve(data);
-    // yield put({
-    //   type: 'saveReservation',
-    //   payload: data,
-    // });
+  },
+  *submitForm({ payload }, { call }) {
+    const { status } = yield call(submitForm, payload);
+    if (status === 200) {
+      notification.success({
+        message: 'Submit successfully!',
+      });
+    }
   },
 };

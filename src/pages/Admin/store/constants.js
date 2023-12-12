@@ -11,3 +11,5 @@ export const FETCH_LUNCH_ACTION = 'fetchLunch';
 export const FETCH_DESERT_ACTION = 'fetchDesert';
 
 export const FETCH_RESERVATION_ACTION = 'fetchReservation';
+
+export const SUBMIT_FORM_ACTION = 'submitForm';
