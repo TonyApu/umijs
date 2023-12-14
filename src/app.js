@@ -4,10 +4,6 @@ export const dva = {
       err.preventDefault();
       console.error(err.message);
     },
-    initialState: {
-      login: [],
-      products: [],
-      test: [],
-    },
+    initialState: {},
   },
 };

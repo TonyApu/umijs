@@ -1,4 +1,4 @@
-import { dateFormat } from '@/constants';
+import { dateFormat } from '../constants';
 import { useUpdateEffect } from 'ahooks';
 import {
   Button,

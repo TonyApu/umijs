@@ -1,4 +1,4 @@
-import { dateFormat } from '@/constants';
+import { dateFormat } from '../../constants';
 import {
   CheckOutlined,
   LoadingOutlined,
@@ -21,11 +21,12 @@ import {
   notification,
 } from 'antd';
 import moment from 'moment';
+import * as React from 'react'
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { createStructuredSelector } from 'reselect';
 
-import { submitForm } from '@/services/menu';
+import { submitForm } from '../../services/menu';
 import {
   fetchBreakfastAction,
   fetchCategoryAction,
@@ -40,12 +41,11 @@ import {
   selectorCategory,
   selectorDesert,
   selectorLunch,
-  selectorReservation,
   selectorRestaurant,
 } from './store/selectors';
 import styles from './style.admin.scss';
 
-const Menu = (props: any) => {
+const Admin:React.FC = (props: any) => {
   const { Title } = Typography;
   const [form] = Form.useForm();
   // const { Option } = Select;
@@ -354,4 +354,4 @@ const mapDispatchToProps = (dispatch: any) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Menu);
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);
