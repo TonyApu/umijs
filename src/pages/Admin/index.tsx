@@ -340,7 +340,7 @@ const mapStateToProps = createStructuredSelector({
   desert: selectorDesert,
 });
 
-const mapDispatchToProps = (dispatch: any) => {
+export const mapDispatchToProps = (dispatch: any) => {
   return {
     fetchCategory: (id: string) => dispatch(fetchCategoryAction(id)),
     fetchRestaurant: () => dispatch(fetchRestaurantAction()),

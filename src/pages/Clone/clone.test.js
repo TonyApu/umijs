@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from "react";
 import renderer from 'react-test-renderer';
-import Admin, { mapDispatchToProps } from './index';
+import Clone, { mapDispatchToProps } from './index';
 
 jest.mock('@umijs/max', () => {
   return {
@@ -8,6 +8,16 @@ jest.mock('@umijs/max', () => {
     connect: () => (Component) => Component,
   };
 });
+
+// jest.mock('react', () => ({
+//   ...jest.requireActual('react'),
+//   useEffect: (effect) => effect(),
+// }));
+
+// jest.mock('ahooks', () => ({
+//   ...jest.requireActual('ahooks'),
+//   useUpdateEffect: (effect) => effect(),
+// }));
 
 jest.mock('../Admin/store/selectors', () => ({
   selectorRestaurant: jest.fn().mockReturnValue([
@@ -36,32 +46,34 @@ jest.mock('../Admin/store/selectors', () => ({
   selectorReservation: jest.fn().mockReturnValue(''),
 }));
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useEffect: (effect) => effect(),
-}));
-
-jest.mock('ahooks', () => ({
-  ...jest.requireActual('ahooks'),
-  useUpdateEffect: (effect) => effect(),
-}));
-
 jest.mock('antd', () => {
   const antd = jest.requireActual('antd');
-  const Typography = ({ children, onChange }) => {
-    return (
-      <typography onChange={(e) => onChange(e.target.value)}>
-        {children}
-      </typography>
-    );
+  const Typography = ({ children }) => {
+    return <typography>{children}</typography>;
   };
   Typography.Title = ({ children, ...otherProps }) => {
     return <title {...otherProps}>{children}</title>;
   };
 
+  const Form = ({ children, ...otherProps  }) => {
+    return <form {...otherProps}>{children}</form>;
+  };
+
+  // Form.Item = ({ children, ...otherProps }) => {
+  //   return <item {...otherProps}>{children}</item>;
+  // };
+
   return {
     ...antd,
     Typography,
+    Form: {
+      ...Form,
+      useForm: () => [{
+        setFieldValue: jest.fn(),
+        submit: jest.fn(),
+        resetFields: jest.fn()
+      }],
+    },
   };
 });
 
@@ -119,7 +131,7 @@ describe('App component', () => {
       fetchDesert: jest.fn(),
       fetchReservation: jest.fn(),
     };
-    const tree = renderer.create(<Admin {...baseProps} />).toJSON();
+    const tree = renderer.create(<Clone {...baseProps} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

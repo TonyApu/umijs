@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App component matches the snapshot 1`] = `
+<div
+  className="container"
+>
+  <div
+    className="titleWrapper"
+  >
+    <title
+      className="title"
+      level={2}
+    >
+      Page admin
+    </title>
+  </div>
+  <div
+    className="buttonWrapper"
+  >
+    <button
+      className="ant-btn css-dev-only-do-not-override-1g853jt ant-btn-default"
+      disabled={false}
+      onClick={[Function]}
+      style={{}}
+      type="button"
+    >
+      <span>
+        Delete Screen (CTRL + R)
+      </span>
+    </button>
+    <button
+      className="ant-btn css-dev-only-do-not-override-1g853jt ant-btn-primary saveButton"
+      disabled={false}
+      onClick={[Function]}
+      style={{}}
+      type="submit"
+    >
+      <span>
+        Save (CTRL + S)
+      </span>
+    </button>
+  </div>
+</div>
+`;

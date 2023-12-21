@@ -1,0 +1,43 @@
+$primary-color: #3486eb;
+
+.container {
+  .titleWrapper {
+    min-height: 50px;
+    .title {
+      color: $primary-color;
+    }
+  }
+
+  .buttonWrapper {
+    display: flex;
+    justify-content: flex-end;
+    .saveButton {
+      margin-left: 10px;
+      background-color: $primary-color;
+    }
+  }
+
+  .sectionTitle {
+    background: $primary-color;
+    padding: 5px;
+    margin-top: 10px;
+    h5 {
+      margin-bottom: 0;
+      color: white;
+    }
+  }
+
+  .rowWrapper {
+    margin-top: 10px;
+    .datePicker {
+      width: 100%;
+    }
+  }
+
+  .rowLoading {
+    margin: 20px 0;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 4px;
+  }
+}
